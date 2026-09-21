@@ -129,7 +129,7 @@ li{margin-bottom:6px}
 .lay .col{display:flex;flex-direction:column;gap:8px}
 .lay .row{display:grid;gap:8px}
 .lay .r4{grid-template-columns:repeat(4,1fr)}
-.lay .r2{grid-template-columns:1.47fr 1fr}
+.lay .r2{grid-template-columns:1.54fr 1fr}
 @media(max-width:700px){.lay{grid-template-columns:1fr}.lay .r4{grid-template-columns:repeat(2,1fr)}.lay .r2{grid-template-columns:1fr}}
 .sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.12)}
 
@@ -342,38 +342,42 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
 
   <div class="card pad">
     <h3 style="margin-top:0">キャンバスの設定</h3>
-    <p>どのビジュアルも選択していない状態で書式ペインを開き、［<b>キャンバスの設定</b>］を次にします。</p>
+    <p>テーマ ペインの［<b>ページ</b>］→［<b>キャンバスの設定</b>］にあります。基本テーマ Fluent 2 の既定が <code>1920 × 1080</code> なので、<b>そのまま使います</b>。</p>
     <dl class="field">
-      <dt>種類</dt><dd>カスタム</dd>
-      <dt>高さ / 幅</dt><dd><code>960</code> / <code>1280</code></dd>
-      <dt>垂直方向の配置</dt><dd>上</dd>
+      <dt>幅 (px)</dt><dd><code>1920</code>（既定のまま）</dd>
+      <dt>高さ (px)</dt><dd><code>1080</code>（既定のまま）</dd>
+      <dt>縦方向の配置</dt><dd>中央（既定のまま）</dd>
+      <dt>キャンバスの背景</dt><dd><code>#F1F1F1</code>・透明度 0</dd>
+      <dt>壁紙</dt><dd><code>#F1F1F1</code>・透明度 0</dd>
     </dl>
-    <div class="note">既定の 720 では7つのビジュアルが入りきりません。閲覧時は［表示］→［<b>ページに合わせる</b>］で自動的に縮小表示されます。</div>
+    <div class="note hl"><b>テーマ ペインで設定すると全ページに効きます。</b>
+    ページごとの書式ペインからでも同じ項目に入れますが、そちらはそのページだけです。4ページ構成にするので、ペイン側で決めておくほうが手数が少なくて済みます。</div>
+    <div class="note">閲覧時は［表示］→［<b>ページに合わせる</b>］で画面サイズに自動で縮小表示されます。1920pxのモニターでなくても問題ありません。</div>
 
     <h3>完成イメージ</h3>
     <div class="lay">
       <div class="col">
-        <div class="box"><b>スライサー 担当者</b><span class="xy">16, 16 · 176×180</span></div>
-        <div class="box"><b>スライサー 目的</b><span class="xy">16, 204 · 176×230</span></div>
-        <div class="box"><b>スライサー 年月</b><span class="xy">16, 442 · 176×180</span></div>
+        <div class="box"><b>スライサー 担当者</b><span class="xy">20, 20 · 260×240</span></div>
+        <div class="box"><b>スライサー 目的</b><span class="xy">20, 276 · 260×380</span></div>
+        <div class="box"><b>スライサー 年月</b><span class="xy">20, 672 · 260×180</span></div>
       </div>
       <div class="col">
         <div class="row r4">
-          <div class="box"><b>訪問件数</b><span class="xy">204, 16</span></div>
-          <div class="box"><b>顧客数</b><span class="xy">472, 16</span></div>
-          <div class="box"><b>担当者数</b><span class="xy">740, 16</span></div>
-          <div class="box"><b>クレーム対応</b><span class="xy">1008, 16</span></div>
+          <div class="box"><b>訪問件数</b><span class="xy">300, 20</span></div>
+          <div class="box"><b>顧客数</b><span class="xy">704, 20</span></div>
+          <div class="box"><b>担当者数</b><span class="xy">1108, 20</span></div>
+          <div class="box"><b>クレーム対応</b><span class="xy">1512, 20</span></div>
         </div>
         <div class="row r2">
-          <div class="box"><b>顧客別 訪問件数</b>横棒<span class="xy">204, 124 · 624×260</span></div>
-          <div class="box"><b>目的別 件数</b>横棒<span class="xy">840, 124 · 424×260</span></div>
+          <div class="box"><b>顧客別 訪問件数</b>横棒<span class="xy">300, 156 · 960×300</span></div>
+          <div class="box"><b>目的別 件数</b>横棒<span class="xy">1276, 156 · 624×300</span></div>
         </div>
         <div class="row r2">
-          <div class="box"><b>月別 推移</b>縦棒<span class="xy">204, 392 · 624×200</span></div>
-          <div class="box"><b>担当者別 件数</b>横棒<span class="xy">840, 392 · 424×200</span></div>
+          <div class="box"><b>月別 推移</b>縦棒<span class="xy">300, 472 · 960×260</span></div>
+          <div class="box"><b>担当者別 件数</b>横棒<span class="xy">1276, 472 · 624×260</span></div>
         </div>
-        <div class="box"><b>担当者 × 顧客 マトリックス</b><span class="xy">204, 600 · 1060×190</span></div>
-        <div class="box"><b>活動明細</b>テーブル<span class="xy">204, 798 · 1060×146</span></div>
+        <div class="box"><b>担当者 × 顧客 マトリックス</b><span class="xy">300, 748 · 1600×150</span></div>
+        <div class="box"><b>活動明細</b>テーブル<span class="xy">300, 914 · 1600×146</span></div>
       </div>
     </div>
 
@@ -382,19 +386,19 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
     <div class="scroll"><table>
       <thead><tr><th style="width:30%">ビジュアル</th><th class="nw">水平位置</th><th class="nw">垂直位置</th><th class="nw">幅</th><th class="nw">高さ</th></tr></thead>
       <tbody>
-        <tr><td>スライサー 担当者</td><td class="mono">16</td><td class="mono">16</td><td class="mono">176</td><td class="mono">180</td></tr>
-        <tr><td>スライサー 目的</td><td class="mono">16</td><td class="mono">204</td><td class="mono">176</td><td class="mono">230</td></tr>
-        <tr><td>スライサー 年月</td><td class="mono">16</td><td class="mono">442</td><td class="mono">176</td><td class="mono">180</td></tr>
-        <tr><td>カード 訪問件数</td><td class="mono">204</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
-        <tr><td>カード 顧客数</td><td class="mono">472</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
-        <tr><td>カード 担当者数</td><td class="mono">740</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
-        <tr><td>カード クレーム対応</td><td class="mono">1008</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
-        <tr><td>顧客別 訪問件数</td><td class="mono">204</td><td class="mono">124</td><td class="mono">624</td><td class="mono">260</td></tr>
-        <tr><td>目的別 件数</td><td class="mono">840</td><td class="mono">124</td><td class="mono">424</td><td class="mono">260</td></tr>
-        <tr><td>月別 推移</td><td class="mono">204</td><td class="mono">392</td><td class="mono">624</td><td class="mono">200</td></tr>
-        <tr><td>担当者別 件数</td><td class="mono">840</td><td class="mono">392</td><td class="mono">424</td><td class="mono">200</td></tr>
-        <tr><td>マトリックス</td><td class="mono">204</td><td class="mono">600</td><td class="mono">1060</td><td class="mono">190</td></tr>
-        <tr><td>活動明細</td><td class="mono">204</td><td class="mono">798</td><td class="mono">1060</td><td class="mono">146</td></tr>
+        <tr><td>スライサー 担当者</td><td class="mono">20</td><td class="mono">20</td><td class="mono">260</td><td class="mono">240</td></tr>
+        <tr><td>スライサー 目的</td><td class="mono">20</td><td class="mono">276</td><td class="mono">260</td><td class="mono">380</td></tr>
+        <tr><td>スライサー 年月</td><td class="mono">20</td><td class="mono">672</td><td class="mono">260</td><td class="mono">180</td></tr>
+        <tr><td>カード 訪問件数</td><td class="mono">300</td><td class="mono">20</td><td class="mono">388</td><td class="mono">120</td></tr>
+        <tr><td>カード 顧客数</td><td class="mono">704</td><td class="mono">20</td><td class="mono">388</td><td class="mono">120</td></tr>
+        <tr><td>カード 担当者数</td><td class="mono">1108</td><td class="mono">20</td><td class="mono">388</td><td class="mono">120</td></tr>
+        <tr><td>カード クレーム対応</td><td class="mono">1512</td><td class="mono">20</td><td class="mono">388</td><td class="mono">120</td></tr>
+        <tr><td>顧客別 訪問件数</td><td class="mono">300</td><td class="mono">156</td><td class="mono">960</td><td class="mono">300</td></tr>
+        <tr><td>目的別 件数</td><td class="mono">1276</td><td class="mono">156</td><td class="mono">624</td><td class="mono">300</td></tr>
+        <tr><td>月別 推移</td><td class="mono">300</td><td class="mono">472</td><td class="mono">960</td><td class="mono">260</td></tr>
+        <tr><td>担当者別 件数</td><td class="mono">1276</td><td class="mono">472</td><td class="mono">624</td><td class="mono">260</td></tr>
+        <tr><td>マトリックス</td><td class="mono">300</td><td class="mono">748</td><td class="mono">1600</td><td class="mono">150</td></tr>
+        <tr><td>活動明細</td><td class="mono">300</td><td class="mono">914</td><td class="mono">1600</td><td class="mono">146</td></tr>
       </tbody>
     </table></div>
     <div class="note hl"><b>作る順番は「全部置いてから位置を入れる」より「1つ作る→位置を入れる」のほうが早いです。</b>
