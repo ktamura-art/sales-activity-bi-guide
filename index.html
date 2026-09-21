@@ -342,37 +342,45 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
 
   <div class="card pad">
     <h3 style="margin-top:0">キャンバスの設定</h3>
-    <p>テーマ ペインの［<b>ページ</b>］→［<b>キャンバスの設定</b>］にあります。基本テーマ Fluent 2 の既定が <code>1920 × 1080</code> なので、<b>そのまま使います</b>。</p>
+    <p>テーマ ペインの［<b>ページ</b>］→［<b>キャンバスの設定</b>］にあります。<b><code>1920 × 1400</code> にします。</b></p>
     <dl class="field">
-      <dt>幅 (px)</dt><dd><code>1920</code>（既定のまま）</dd>
-      <dt>高さ (px)</dt><dd><code>1080</code>（既定のまま）</dd>
-      <dt>縦方向の配置</dt><dd>中央（既定のまま）</dd>
+      <dt>型</dt><dd><b>カスタム</b></dd>
+      <dt>幅 (px)</dt><dd><code>1920</code></dd>
+      <dt>高さ (px)</dt><dd><code>1400</code></dd>
       <dt>キャンバスの背景</dt><dd><code>#F1F1F1</code>・透明度 0</dd>
       <dt>壁紙</dt><dd><code>#F1F1F1</code>・透明度 0</dd>
     </dl>
-    <div class="note hl"><b>テーマ ペインで設定すると全ページに効きます。</b>
+    <div class="note alert"><b>［型］をカスタムにしないと高さを打ち込めません。</b>
+    16:9のままだと 1280×720 / 1920×1080 / 2560×1440 / 3840×2160 のプリセットからしか選べません。
+    カスタムに変えると、プルダウンが幅と高さの入力欄に変わります。<br>
+    2560×1440を選ぶ手もありますが、横も2560に広がるため<b>座標を10個すべて計算し直し</b>になります。カスタムなら横の値をそのまま使えます。</div>
+    <div class="note warn"><b>既定の1080では、マトリックスと活動明細に高さが足りません。</b>
+    実測すると、マトリックスは行が1行しか入らず文字が重なり、明細も1行しか見えませんでした。
+    キャンバスを1400にして下の2つに高さを回すと解消します。</div>
+    <div class="note hl"><b>閲覧時は［表示］→［幅に合わせる］を使ってください。</b>
+    縦スクロールになりますが文字の大きさが保たれます。［ページに合わせる］だと全体を縮めて表示するので、1400にした意味がなくなります。</div>
+    <div class="note"><b>テーマ ペインで設定すると全ページに効きます。</b>
     ページごとの書式ペインからでも同じ項目に入れますが、そちらはそのページだけです。4ページ構成にするので、ペイン側で決めておくほうが手数が少なくて済みます。</div>
-    <div class="note">閲覧時は［表示］→［<b>ページに合わせる</b>］で画面サイズに自動で縮小表示されます。1920pxのモニターでなくても問題ありません。</div>
 
     <h3>完成イメージ</h3>
     <div class="lay">
       <div class="col">
-        <div class="box"><b>スライサー 担当者</b><span class="xy">20, 20 · 260×240</span></div>
-        <div class="box"><b>スライサー 目的</b><span class="xy">20, 276 · 260×380</span></div>
-        <div class="box"><b>スライサー 年月</b><span class="xy">20, 672 · 260×180</span></div>
+        <div class="box"><b>スライサー 担当者</b><span class="xy">20, 20 · 260×300</span></div>
+        <div class="box"><b>スライサー 目的</b><span class="xy">20, 340 · 260×440</span></div>
+        <div class="box"><b>スライサー 年月</b><span class="xy">20, 800 · 260×220</span></div>
       </div>
       <div class="col">
-        <div class="box"><b>カード　訪問件数 ／ 顧客数 ／ 担当者数 ／ クレーム対応</b><span class="xy">300, 20 · 1600×120（4つで1つのビジュアル）</span></div>
+        <div class="box"><b>カード　訪問件数 ／ 顧客数 ／ 担当者数 ／ クレーム対応</b><span class="xy">300, 20 · 1600×140（4つで1つのビジュアル）</span></div>
         <div class="row r2">
-          <div class="box"><b>顧客別 訪問件数</b>横棒<span class="xy">300, 156 · 960×300</span></div>
-          <div class="box"><b>目的別 件数</b>横棒<span class="xy">1276, 156 · 624×300</span></div>
+          <div class="box"><b>顧客別 訪問件数</b>横棒<span class="xy">300, 180 · 960×340</span></div>
+          <div class="box"><b>目的別 件数</b>横棒<span class="xy">1280, 180 · 620×340</span></div>
         </div>
         <div class="row r2">
-          <div class="box"><b>月別 推移</b>縦棒<span class="xy">300, 472 · 960×260</span></div>
-          <div class="box"><b>担当者別 件数</b>横棒<span class="xy">1276, 472 · 624×260</span></div>
+          <div class="box"><b>月別 推移</b>縦棒<span class="xy">300, 540 · 960×300</span></div>
+          <div class="box"><b>担当者別 件数</b>横棒<span class="xy">1280, 540 · 620×300</span></div>
         </div>
-        <div class="box"><b>担当者 × 顧客 マトリックス</b><span class="xy">300, 748 · 1600×150</span></div>
-        <div class="box"><b>活動明細</b>テーブル<span class="xy">300, 914 · 1600×146</span></div>
+        <div class="box"><b>担当者 × 顧客 マトリックス</b><span class="xy">300, 860 · 1600×260</span></div>
+        <div class="box"><b>活動明細</b>テーブル<span class="xy">300, 1140 · 1600×240</span></div>
       </div>
     </div>
 
@@ -383,16 +391,16 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
     <div class="scroll"><table>
       <thead><tr><th style="width:30%">ビジュアル</th><th class="nw">位置 横</th><th class="nw">位置 縦</th><th class="nw">サイズ 幅</th><th class="nw">サイズ 高さ</th></tr></thead>
       <tbody>
-        <tr><td>スライサー 担当者</td><td class="mono">20</td><td class="mono">20</td><td class="mono">260</td><td class="mono">240</td></tr>
-        <tr><td>スライサー 目的</td><td class="mono">20</td><td class="mono">276</td><td class="mono">260</td><td class="mono">380</td></tr>
-        <tr><td>スライサー 年月</td><td class="mono">20</td><td class="mono">672</td><td class="mono">260</td><td class="mono">180</td></tr>
-        <tr><td>カード（4つの数字をまとめて1つ）</td><td class="mono">300</td><td class="mono">20</td><td class="mono">1600</td><td class="mono">120</td></tr>
-        <tr><td>顧客別 訪問件数</td><td class="mono">300</td><td class="mono">156</td><td class="mono">960</td><td class="mono">300</td></tr>
-        <tr><td>目的別 件数</td><td class="mono">1276</td><td class="mono">156</td><td class="mono">624</td><td class="mono">300</td></tr>
-        <tr><td>月別 推移</td><td class="mono">300</td><td class="mono">472</td><td class="mono">960</td><td class="mono">260</td></tr>
-        <tr><td>担当者別 件数</td><td class="mono">1276</td><td class="mono">472</td><td class="mono">624</td><td class="mono">260</td></tr>
-        <tr><td>マトリックス</td><td class="mono">300</td><td class="mono">748</td><td class="mono">1600</td><td class="mono">150</td></tr>
-        <tr><td>活動明細</td><td class="mono">300</td><td class="mono">914</td><td class="mono">1600</td><td class="mono">146</td></tr>
+        <tr><td>スライサー 担当者</td><td class="mono">20</td><td class="mono">20</td><td class="mono">260</td><td class="mono">300</td></tr>
+        <tr><td>スライサー 目的</td><td class="mono">20</td><td class="mono">340</td><td class="mono">260</td><td class="mono">440</td></tr>
+        <tr><td>スライサー 年月</td><td class="mono">20</td><td class="mono">800</td><td class="mono">260</td><td class="mono">220</td></tr>
+        <tr><td>カード（4つの数字をまとめて1つ）</td><td class="mono">300</td><td class="mono">20</td><td class="mono">1600</td><td class="mono">140</td></tr>
+        <tr><td>顧客別 訪問件数</td><td class="mono">300</td><td class="mono">180</td><td class="mono">960</td><td class="mono">340</td></tr>
+        <tr><td>目的別 件数</td><td class="mono">1280</td><td class="mono">180</td><td class="mono">620</td><td class="mono">340</td></tr>
+        <tr><td>月別 推移</td><td class="mono">300</td><td class="mono">540</td><td class="mono">960</td><td class="mono">300</td></tr>
+        <tr><td>担当者別 件数</td><td class="mono">1280</td><td class="mono">540</td><td class="mono">620</td><td class="mono">300</td></tr>
+        <tr><td>マトリックス</td><td class="mono">300</td><td class="mono">860</td><td class="mono">1600</td><td class="mono">260</td></tr>
+        <tr><td>活動明細</td><td class="mono">300</td><td class="mono">1140</td><td class="mono">1600</td><td class="mono">240</td></tr>
       </tbody>
     </table></div>
     <div class="note hl"><b>作る順番は「全部置いてから位置を入れる」より「1つ作る→位置を入れる」のほうが早いです。</b>
