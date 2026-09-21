@@ -292,8 +292,30 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
     <div class="note ok"><b>色の指定はほとんど不要です。</b>
     デモはPower BIの既定配色に合わせて作ってあるので、<b>実際に設定するのはクレーム対応の赤と、背景まわりだけ</b>です。</div>
 
-    <h3>方法A　テーマのカスタマイズ（推奨・ブラウザで完結）</h3>
-    <p>上部メニュー［<b>表示</b>］→［<b>テーマ</b>］→［<b>現在のテーマをカスタマイズ</b>］を開き、次を設定します。</p>
+    <div class="note hl"><b>テーマの入口は2つあり、Web版で使えるのは片方だけです。</b>
+    ［表示］→［テーマ］の<b>ドロップダウン</b>には、Web版では組み込みテーマしか並びません。
+    ［参照］［現在のテーマをカスタマイズ］はDesktop専用です（<i>「The lower section of the Themes dropdown is only available in Power BI Desktop.」</i>）。<br>
+    Web版で使うのは、そのドロップダウン上部に出るリンク <b>［テーマの書式設定］ペインを開きます</b> か、
+    ［表示］リボンの<b>［テーマ］ペインの切り替え</b>です。<b>こちらのペインはWeb版でも動き、JSONのインポートもできます。</b>
+    <div class="src">出典：<a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes">Use report themes in Power BI — Microsoft Learn</a>（「Apply a custom report theme JSON file」は Desktop または Power BI サービスに適用と明記）</div></div>
+
+    <h3>方法A　テーマJSONをインポートする（推奨・速い）</h3>
+    <p>お渡しした <code>テーマ_営業活動ダッシュボード.json</code> を使います。</p>
+    <ol>
+      <li>［<b>表示</b>］リボンで［<b>テーマ</b>］ペインをオンにする</li>
+      <li>［<b>テーマ設定</b>］を開く</li>
+      <li>［<b>テーマのインポート</b>］でJSONを選ぶ</li>
+    </ol>
+    <p>成功するとダイアログが出ます。失敗したときもダイアログにエラー内容が出ます。</p>
+    <div class="note"><b>このJSONに入れてあるのは、公式ドキュメントに記載のあるキーだけです。</b>
+    <code>dataColors</code>／構造色（<code>firstLevelElements</code> 等）／<code>textClasses</code> の3つです。
+    ビジュアルの背景・境界線とページ背景は <code>visualStyles</code> での指定を見送り、次の方法Bのペイン側で設定します。
+    Power BIはインポート時にJSONを検証し、解釈できないキーがあるとエラーにするためです。</div>
+    <div class="note ok"><b>デモの配色はPower BIの既定パレットそのものです。</b>
+    クレーム対応の <code>#D64550</code> も、公式ドキュメントが挙げる既定 <code>dataColors</code> の8番目です。独自の色は使っていません。</div>
+
+    <h3>方法B　テーマ ペインで手で設定する</h3>
+    <p>JSONを使わない場合、または方法Aのあと残りを詰める場合は、同じ［テーマ］ペインで次を設定します。</p>
     <div class="scroll"><table>
       <thead><tr><th style="width:24%">タブ</th><th style="width:30%">項目</th><th>値</th></tr></thead>
       <tbody>
@@ -307,46 +329,6 @@ footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
         <tr><td>ページ</td><td>壁紙 / 背景</td><td><code>#F1F1F1</code>・透明度 0%</td></tr>
       </tbody>
     </table></div>
-
-    <h3>方法B　テーマJSONを読み込む</h3>
-    <p>下のJSONを <code>sales-activity-theme.json</code> として保存し、［表示］→［テーマ］→［<b>テーマのインポート</b>］で読み込みます。</p>
-    <pre><code>{
-  "name": "営業活動ダッシュボード",
-  "dataColors": ["#118DFF","#12239E","#E66C37","#6B007B","#E044A7","#744EC2","#D9B300","#D64550"],
-  "background": "#FFFFFF",
-  "foreground": "#252423",
-  "tableAccent": "#118DFF",
-  "textClasses": {
-    "title":   { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#252423" },
-    "label":   { "fontFace": "Segoe UI",          "fontSize": 10, "color": "#605E5C" },
-    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 29, "color": "#252423" }
-  },
-  "visualStyles": {
-    "*": {
-      "*": {
-        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
-        "border":     [{ "show": true, "color": { "solid": { "color": "#E6E6E6" } }, "radius": 3 }],
-        "title":      [{ "show": true, "alignment": "left" }]
-      }
-    },
-    "page": {
-      "*": {
-        "background": [{ "color": { "solid": { "color": "#F1F1F1" } }, "transparency": 0 }]
-      }
-    }
-  }
-}</code></pre>
-
-    <div class="note alert"><b>この方法は公式ドキュメントの記述が食い違っています。</b>
-    同じページの中で、テーマ一覧について
-    <i>「The lower section of the Themes dropdown is only available in Power BI Desktop. When editing reports in the Power BI service, you can only see the upper section (built-in and organizational themes).」</i>
-    とある一方、別の節では
-    <i>「You can apply custom theme JSON files ... to any other report in Power BI Desktop or the Power BI service.」</i>
-    とし、［テーマ］ペインからの［テーマのインポート］手順が案内されています。
-    <br><br>
-    <b>このJSONは御社環境で未検証です。</b>［テーマのインポート］が見当たらない場合は<b>方法A</b>で同じ見た目になります。
-    方法Aはドキュメント上もサービスで使えると明記されているため、<b>まず方法Aを試すことをお勧めします</b>。
-    <div class="src">出典：<a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes">Use report themes in Power BI — Microsoft Learn</a></div></div>
 
     <div class="note warn"><b>テーマの適用は既存の書式を消します。</b>
     <i>「Importing a custom theme also removes any existing customizations you already added to the report.」</i>
