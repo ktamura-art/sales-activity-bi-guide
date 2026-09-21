@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>営業活動ダッシュボード 構築手順</title>
+<meta name="description" content="SharePointリストに接続したPower BIで、営業活動ダッシュボードをデモと同じ見た目に組み立てる手順">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600&family=Roboto+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#f4f6f8; --surface:#fff; --surface-2:#fafbfc; --surface-3:#eef2f6;
+  --ink-1:#16202b; --ink-2:#4a5a6b; --ink-3:#7b8a99;
+  --line:#dde3ea; --line-strong:#c3ccd6;
+  --navy:#1f4e78; --navy-soft:#eaf1f8;
+  --ok:#2f7d5f; --ok-bg:#e7f3ee; --ok-line:#a9d4c1;
+  --warn:#a4661c; --warn-bg:#fbf1e2;
+  --alert:#a83a2c; --alert-bg:#fbeceb;
+  --code-bg:#f5f7f9; --code-ink:#1c3a52;
+  --shadow:0 1px 2px rgba(22,32,43,.05), 0 8px 24px -12px rgba(22,32,43,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0f151b; --surface:#19212a; --surface-2:#1d262f; --surface-3:#232d38;
+    --ink-1:#e8edf3; --ink-2:#9dabba; --ink-3:#75838f;
+    --line:#2b3642; --line-strong:#3b4856;
+    --navy:#7fb3dc; --navy-soft:#1b2836;
+    --ok:#6fbf9a; --ok-bg:#14291f; --ok-line:#2c5a46;
+    --warn:#d3a35c; --warn-bg:#2a2113;
+    --alert:#e08a7d; --alert-bg:#2d1a17;
+    --code-bg:#131a21; --code-ink:#a8c8e0;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0f151b; --surface:#19212a; --surface-2:#1d262f; --surface-3:#232d38;
+  --ink-1:#e8edf3; --ink-2:#9dabba; --ink-3:#75838f;
+  --line:#2b3642; --line-strong:#3b4856;
+  --navy:#7fb3dc; --navy-soft:#1b2836;
+  --ok:#6fbf9a; --ok-bg:#14291f; --ok-line:#2c5a46;
+  --warn:#d3a35c; --warn-bg:#2a2113;
+  --alert:#e08a7d; --alert-bg:#2d1a17;
+  --code-bg:#131a21; --code-ink:#a8c8e0;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink-1);
+  font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+  font-size:15px;line-height:1.85;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+h1,h2,h3,h4{font-family:"Noto Serif JP",serif;font-weight:600;text-wrap:balance;margin:0}
+.mono{font-family:"Roboto Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{display:flex;flex-wrap:wrap;gap:18px;align-items:baseline;justify-content:space-between;padding:32px 0 24px}
+.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--ink-3);font-weight:500}
+h1{font-size:clamp(25px,3.6vw,33px);line-height:1.35;margin-top:6px}
+.meta{font-size:12.5px;color:var(--ink-3);text-align:right;line-height:1.9}
+
+nav.sticky{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 93%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;gap:2px;overflow-x:auto;padding:0 22px;max-width:960px;margin:0 auto}
+.nav-in a{flex:none;padding:12px 11px;font-size:13px;font-weight:500;color:var(--ink-2);
+  text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.nav-in a:hover{color:var(--ink-1);border-bottom-color:var(--line-strong)}
+.nav-in a:focus-visible{outline:2px solid var(--navy);outline-offset:-2px;border-radius:4px}
+
+section{padding:44px 0 6px;scroll-margin-top:54px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.sec-num{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink-3);letter-spacing:.06em}
+h2{font-size:21px}
+h3{font-size:16px;margin:26px 0 8px}
+h4{font-size:13.5px;margin:18px 0 6px;color:var(--ink-2)}
+.lede{color:var(--ink-2);font-size:14px;max-width:70ch;margin:8px 0 20px}
+p{margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+.pad{padding:20px 22px}
+.scroll{overflow-x:auto}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;text-align:left}
+thead th{background:var(--surface-3);font-weight:700;font-size:12px;color:var(--ink-2);white-space:nowrap}
+tbody tr:nth-child(even) td{background:var(--surface-2)}
+.nw{white-space:nowrap}
+code{font-family:"Roboto Mono",monospace;font-size:12.5px;background:var(--code-bg);
+  color:var(--code-ink);padding:1px 5px;border-radius:4px;word-break:break-all}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:13px 15px;
+  overflow-x:auto;margin:10px 0 12px}
+pre code{background:none;padding:0;font-size:12.5px;line-height:1.75;color:var(--code-ink);word-break:normal}
+
+.step{display:grid;grid-template-columns:38px 1fr;gap:14px;padding:20px 0;border-top:1px solid var(--line)}
+.step:first-of-type{border-top:0}
+.step .no{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+  font-family:"Roboto Mono",monospace;font-size:14px;font-weight:700;
+  background:var(--navy-soft);color:var(--navy)}
+.step .bd{min-width:0}
+.step h3{margin:4px 0 8px;font-size:16.5px}
+.field{display:grid;grid-template-columns:160px 1fr;gap:7px 14px;font-size:13.5px;margin:10px 0 4px}
+.field dt{color:var(--ink-2);font-weight:500}
+.field dd{margin:0}
+@media(max-width:640px){.field{grid-template-columns:1fr}.field dt{margin-top:8px}}
+
+.note{font-size:13px;color:var(--ink-2);background:var(--surface-2);
+  border-left:3px solid var(--line-strong);padding:11px 14px;border-radius:0 7px 7px 0;margin:12px 0}
+.note b{color:var(--ink-1)}
+.note.hl{border-left-color:var(--navy);background:var(--navy-soft);color:var(--ink-1)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-bg);color:var(--ink-1)}
+.note.alert{border-left-color:var(--alert);background:var(--alert-bg);color:var(--ink-1)}
+.note.ok{border-left-color:var(--ok);background:var(--ok-bg);color:var(--ink-1)}
+ul,ol{margin:8px 0 12px;padding-left:1.3em}
+li{margin-bottom:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:2px 10px;
+  border-radius:20px;white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.no{background:var(--alert-bg);color:var(--alert)}
+.src{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+.src a{color:var(--ink-2)}
+
+/* レイアウト図 */
+.lay{background:#F1F1F1;border:1px solid var(--line);border-radius:6px;padding:10px;
+  display:grid;grid-template-columns:120px 1fr;gap:8px;margin:14px 0;color:#252423}
+.lay .box{background:#fff;border:1px solid #E6E6E6;border-radius:3px;padding:8px 9px;font-size:11.5px;line-height:1.5}
+.lay .box b{display:block;font-size:12px;margin-bottom:2px}
+.lay .box .xy{font-family:"Roboto Mono",monospace;font-size:10px;color:#A19F9D}
+.lay .col{display:flex;flex-direction:column;gap:8px}
+.lay .row{display:grid;gap:8px}
+.lay .r4{grid-template-columns:repeat(4,1fr)}
+.lay .r2{grid-template-columns:1.47fr 1fr}
+@media(max-width:700px){.lay{grid-template-columns:1fr}.lay .r4{grid-template-columns:repeat(2,1fr)}.lay .r2{grid-template-columns:1fr}}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.12)}
+
+footer{margin:60px 0 44px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div>
+      <div class="eyebrow">Power BI ／ 営業週報データの可視化</div>
+      <h1>営業活動ダッシュボード 構築手順</h1>
+    </div>
+    <div class="meta">
+      SharePointリスト → Power BI（ブラウザ版）<br>
+      <span class="mono">2026-09-21</span> 版
+    </div>
+  </div>
+</header>
+
+<nav class="sticky"><div class="nav-in">
+  <a href="#s0">前提</a>
+  <a href="#s1">下ごしらえ</a>
+  <a href="#s2">見た目を揃える</a>
+  <a href="#s3">配置</a>
+  <a href="#s4">ビジュアル9個</a>
+  <a href="#s5">ページ②〜④</a>
+  <a href="#s6">動作確認</a>
+  <a href="#s7">つまずき</a>
+</div></nav>
+
+<div class="wrap">
+
+<section id="s0">
+  <div class="sec-head"><span class="sec-num">00</span><h2>前提と完成形</h2></div>
+  <p class="lede">デモでお見せした画面を、ブラウザ版のPower BIで組み立てます。Power BI Desktop は Windows 専用のため、すべてブラウザ（app.powerbi.com）で完結する手順にしています。</p>
+
+  <div class="card pad">
+    <h3 style="margin-top:0">必要なもの</h3>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:30%">項目</th><th>状態</th></tr></thead>
+      <tbody>
+        <tr><td>SharePointリスト</td><td>営業活動履歴（週報データが貯まっていること）</td></tr>
+        <tr><td>Power BIの接続</td><td>セマンティック モデルが作成済み（SharePoint Online リスト コネクタ・実装 2.0）</td></tr>
+        <tr><td>ライセンス</td><td><b>無償のままで作れます。</b>マイ ワークスペース内での作成・スケジュール更新・PDF書き出しは無償の範囲です</td></tr>
+        <tr><td>ブラウザ</td><td>Edge / Chrome。Power BI Desktop は不要です（Windows専用のため使いません）</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn"><b>配布する段階でProが必要になります。</b>
+    他の方に見せるには、作る人だけでなく<b>見る人にもPower BI Pro</b>が要ります（Premium容量に置く場合を除く）。
+    構築中は無償のまま進め、完成が見えた段階で申請するのが無駄がありません。PDF書き出しでの共有は無償のままできます。</div>
+
+    <h3>作るもの（4ページ）</h3>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:22%">ページ</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 概要</b></td><td>KPI 4枚／顧客別・目的別・月別・担当者別の4グラフ／担当者×顧客マトリックス／活動明細／スライサー3本</td></tr>
+        <tr><td>② 顧客別</td><td>顧客を右クリックして飛ぶ「顧客カルテ」（ドリルスルー）</td></tr>
+        <tr><td>③ 担当者別</td><td>担当者ごとの活動内訳</td></tr>
+        <tr><td>④ クレーム分析</td><td>目的＝クレーム対応だけに絞った一覧と推移</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note hl"><b>①だけで十分に使えます。</b>②〜④は余力があればで構いません。
+    まず①を仕上げて実データで確認し、②以降は運用しながら足すほうが手戻りがありません。</div>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>データの下ごしらえ</h2></div>
+  <p class="lede">ビジュアルを作る前にここを済ませておくと、あとの作業が一度で決まります。とくに日付の型は、済ませずに進むと月別グラフと期間スライサーが作れません。</p>
+
+  <div class="card pad">
+
+    <div class="step">
+      <div class="no">1</div>
+      <div class="bd">
+        <h3>日付を「日付と時刻」型にする</h3>
+        <p>CSVから作ったSharePointリストは<b>全列が「1行テキスト」</b>です。このままだとPower BIは日付を文字として扱い、月でまとめることも期間で絞ることもできません。</p>
+        <h4>手順（SharePoint側で直すのが本筋）</h4>
+        <ol>
+          <li>リストを開き、「日付」列の見出し →［<b>列の設定</b>］→［<b>編集</b>］</li>
+          <li>種類を［<b>日付と時刻</b>］に変更 →［保存］</li>
+          <li>Power BIに戻り、セマンティック モデルで［<b>今すぐ更新</b>］</li>
+        </ol>
+        <div class="note warn"><b>既にデータが入っている状態で型を変えると、読めない値がある行はエラーになります。</b>
+        Power Automateが書き込んでいる値は <code>2026-07-20T09:00:00+09:00</code> のような形式なので通るはずですが、
+        手入力された行があると弾かれることがあります。変更後にリストを開いて空欄になった行がないか確認してください。</div>
+        <div class="note"><b>SharePoint側を変えられない場合</b>は、Power BIの［データの変換］でも直せます。
+        「日付」列を選び →［データ型］→［日付/時刻］。ただし<b>先方環境でも毎回この操作が要る</b>ので、リスト側で直すほうが確実です。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">2</div>
+      <div class="bd">
+        <h3>テーブル名を短くする</h3>
+        <p>既定ではリスト名がそのままテーブル名になっています（例：<code>SharePointリスト_営業活動履歴_列のみ_20260911</code>）。
+        このままだとフィールド一覧が読みづらく、数式も長くなります。</p>
+        <p>上部メニューの［<b>セマンティック モデルを開く</b>］→ モデル ビューで、テーブル名をダブルクリックして <code>営業活動履歴</code> に変更します。</p>
+        <div class="note alert"><b>「表示モードになっているため、変更は保存されません」と出たら編集モードに切り替えてください。</b>
+        右上の表示モードの切り替えから［編集］を選びます。この帯が出たままでは何を変えても保存されません。</div>
+        <div class="note"><b>列名は変えなくて構いません。</b>
+        Power BIのSharePointコネクタは<b>内部名（field_1 など）ではなく表示名</b>を持ってくるので、
+        「日付」「担当者」「目的」と日本語で並んでいます。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">3</div>
+      <div class="bd">
+        <h3>メジャーを5本つくる</h3>
+        <p>KPIカードの数字です。モデル ビューのリボン →［<b>新しいメジャー</b>］で1本ずつ作ります。
+        作ったあと右側のプロパティで<b>書式</b>を設定してください。</p>
+
+        <div class="scroll"><table>
+          <thead><tr><th style="width:22%">名前</th><th style="width:44%">数式</th><th>書式</th></tr></thead>
+          <tbody>
+            <tr><td><b>訪問件数</b></td><td><code>COUNTROWS('営業活動履歴')</code></td><td>整数・桁区切りあり</td></tr>
+            <tr><td><b>顧客数</b></td><td><code>DISTINCTCOUNT('営業活動履歴'[顧客名])</code></td><td>整数</td></tr>
+            <tr><td><b>担当者数</b></td><td><code>DISTINCTCOUNT('営業活動履歴'[担当者])</code></td><td>整数</td></tr>
+            <tr><td><b>クレーム件数</b></td><td><code>CALCULATE([訪問件数], '営業活動履歴'[目的] = "クレーム対応")</code></td><td>整数</td></tr>
+            <tr><td><b>クレーム率</b></td><td><code>DIVIDE([クレーム件数], [訪問件数])</code></td><td><b>パーセンテージ・小数1桁</b></td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="note hl"><b>メジャーにしておく理由。</b>
+        「顧客名のカウント（一意）」のようにビジュアル側で集計しても同じ数字は出ますが、
+        メジャーにしておくと<b>どのビジュアルでも同じ定義が使え、名前もそのまま表示されます</b>。
+        デモのKPIカードは「訪問件数」「顧客数」と出ているので、この形にすると見た目が一致します。</div>
+
+        <div class="note warn"><b>区分名を変更したら <code>クレーム件数</code> も直してください。</b>
+        12区分の最終版で「クレーム対応」の表記が変わると、この数式は0件を返します。エラーにならないので気づきにくい箇所です。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>見た目を揃える</h2></div>
+  <p class="lede">ビジュアルを1つずつ書式設定すると手間がかかるうえ、揃いません。先にテーマで全体を決めておくと、以降に追加するビジュアルも自動的に同じ見た目になります。</p>
+
+  <div class="card pad">
+    <h3 style="margin-top:0">デモの配色</h3>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:26%">箇所</th><th style="width:22%">色</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>データの基本色</td><td><span class="sw" style="background:#118DFF"></span><code>#118DFF</code></td><td><b>Power BIの既定色そのままです。</b>変更不要</td></tr>
+        <tr><td>クレーム対応</td><td><span class="sw" style="background:#D64550"></span><code>#D64550</code></td><td>目的別グラフの該当バーとKPIの数字</td></tr>
+        <tr><td>選択されていない部分</td><td><span class="sw" style="background:#C8DEF5"></span><code>#C8DEF5</code></td><td>クロスハイライトの薄い青。<b>既定動作</b>なので設定不要</td></tr>
+        <tr><td>キャンバス背景</td><td><span class="sw" style="background:#F1F1F1"></span><code>#F1F1F1</code></td><td>ビジュアルの外側</td></tr>
+        <tr><td>ビジュアル背景</td><td><span class="sw" style="background:#FFFFFF"></span><code>#FFFFFF</code></td><td>枠線 <code>#E6E6E6</code>・角丸3px</td></tr>
+        <tr><td>文字</td><td><span class="sw" style="background:#252423"></span><code>#252423</code></td><td>ラベルは <code>#605E5C</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="note ok"><b>色の指定はほとんど不要です。</b>
+    デモはPower BIの既定配色に合わせて作ってあるので、<b>実際に設定するのはクレーム対応の赤と、背景まわりだけ</b>です。</div>
+
+    <h3>方法A　テーマのカスタマイズ（推奨・ブラウザで完結）</h3>
+    <p>上部メニュー［<b>表示</b>］→［<b>テーマ</b>］→［<b>現在のテーマをカスタマイズ</b>］を開き、次を設定します。</p>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:24%">タブ</th><th style="width:30%">項目</th><th>値</th></tr></thead>
+      <tbody>
+        <tr><td>名前と色</td><td>テーマの色 1</td><td><code>#118DFF</code>（既定のまま）</td></tr>
+        <tr><td>名前と色</td><td>テーマの色 8</td><td><code>#D64550</code>（クレーム用に確保）</td></tr>
+        <tr><td>テキスト</td><td>全般 → フォント ファミリ</td><td>Segoe UI</td></tr>
+        <tr><td>テキスト</td><td>タイトル → サイズ / 色</td><td>12pt / <code>#252423</code></td></tr>
+        <tr><td>テキスト</td><td>カードと KPI → サイズ</td><td>29pt</td></tr>
+        <tr><td>ビジュアル</td><td>背景 → 色</td><td><code>#FFFFFF</code>・透明度 0%</td></tr>
+        <tr><td>ビジュアル</td><td>境界線</td><td>オン・<code>#E6E6E6</code>・角丸 3px</td></tr>
+        <tr><td>ページ</td><td>壁紙 / 背景</td><td><code>#F1F1F1</code>・透明度 0%</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>方法B　テーマJSONを読み込む</h3>
+    <p>下のJSONを <code>sales-activity-theme.json</code> として保存し、［表示］→［テーマ］→［<b>テーマのインポート</b>］で読み込みます。</p>
+    <pre><code>{
+  "name": "営業活動ダッシュボード",
+  "dataColors": ["#118DFF","#12239E","#E66C37","#6B007B","#E044A7","#744EC2","#D9B300","#D64550"],
+  "background": "#FFFFFF",
+  "foreground": "#252423",
+  "tableAccent": "#118DFF",
+  "textClasses": {
+    "title":   { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#252423" },
+    "label":   { "fontFace": "Segoe UI",          "fontSize": 10, "color": "#605E5C" },
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 29, "color": "#252423" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "border":     [{ "show": true, "color": { "solid": { "color": "#E6E6E6" } }, "radius": 3 }],
+        "title":      [{ "show": true, "alignment": "left" }]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#F1F1F1" } }, "transparency": 0 }]
+      }
+    }
+  }
+}</code></pre>
+
+    <div class="note alert"><b>この方法は公式ドキュメントの記述が食い違っています。</b>
+    同じページの中で、テーマ一覧について
+    <i>「The lower section of the Themes dropdown is only available in Power BI Desktop. When editing reports in the Power BI service, you can only see the upper section (built-in and organizational themes).」</i>
+    とある一方、別の節では
+    <i>「You can apply custom theme JSON files ... to any other report in Power BI Desktop or the Power BI service.」</i>
+    とし、［テーマ］ペインからの［テーマのインポート］手順が案内されています。
+    <br><br>
+    <b>このJSONは御社環境で未検証です。</b>［テーマのインポート］が見当たらない場合は<b>方法A</b>で同じ見た目になります。
+    方法Aはドキュメント上もサービスで使えると明記されているため、<b>まず方法Aを試すことをお勧めします</b>。
+    <div class="src">出典：<a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-themes">Use report themes in Power BI — Microsoft Learn</a></div></div>
+
+    <div class="note warn"><b>テーマの適用は既存の書式を消します。</b>
+    <i>「Importing a custom theme also removes any existing customizations you already added to the report.」</i>
+    ビジュアルを個別に書式設定したあとでテーマを入れ直すと、その調整が失われます。<b>必ずビジュアルを作る前にテーマを決めてください。</b></div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>配置を決める</h2></div>
+  <p class="lede">見た目を揃える一番の近道は、位置とサイズを数値で入れることです。ドラッグで並べると必ずずれます。</p>
+
+  <div class="card pad">
+    <h3 style="margin-top:0">キャンバスの設定</h3>
+    <p>どのビジュアルも選択していない状態で書式ペインを開き、［<b>キャンバスの設定</b>］を次にします。</p>
+    <dl class="field">
+      <dt>種類</dt><dd>カスタム</dd>
+      <dt>高さ / 幅</dt><dd><code>960</code> / <code>1280</code></dd>
+      <dt>垂直方向の配置</dt><dd>上</dd>
+    </dl>
+    <div class="note">既定の 720 では7つのビジュアルが入りきりません。閲覧時は［表示］→［<b>ページに合わせる</b>］で自動的に縮小表示されます。</div>
+
+    <h3>完成イメージ</h3>
+    <div class="lay">
+      <div class="col">
+        <div class="box"><b>スライサー 担当者</b><span class="xy">16, 16 · 176×180</span></div>
+        <div class="box"><b>スライサー 目的</b><span class="xy">16, 204 · 176×230</span></div>
+        <div class="box"><b>スライサー 年月</b><span class="xy">16, 442 · 176×180</span></div>
+      </div>
+      <div class="col">
+        <div class="row r4">
+          <div class="box"><b>訪問件数</b><span class="xy">204, 16</span></div>
+          <div class="box"><b>顧客数</b><span class="xy">472, 16</span></div>
+          <div class="box"><b>担当者数</b><span class="xy">740, 16</span></div>
+          <div class="box"><b>クレーム対応</b><span class="xy">1008, 16</span></div>
+        </div>
+        <div class="row r2">
+          <div class="box"><b>顧客別 訪問件数</b>横棒<span class="xy">204, 124 · 624×260</span></div>
+          <div class="box"><b>目的別 件数</b>横棒<span class="xy">840, 124 · 424×260</span></div>
+        </div>
+        <div class="row r2">
+          <div class="box"><b>月別 推移</b>縦棒<span class="xy">204, 392 · 624×200</span></div>
+          <div class="box"><b>担当者別 件数</b>横棒<span class="xy">840, 392 · 424×200</span></div>
+        </div>
+        <div class="box"><b>担当者 × 顧客 マトリックス</b><span class="xy">204, 600 · 1060×190</span></div>
+        <div class="box"><b>活動明細</b>テーブル<span class="xy">204, 798 · 1060×146</span></div>
+      </div>
+    </div>
+
+    <h3>位置とサイズの一覧</h3>
+    <p>各ビジュアルを選んで、書式ペイン →［<b>全般</b>］→［<b>プロパティ</b>］→［サイズ］［位置］に入れます。</p>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:30%">ビジュアル</th><th class="nw">水平位置</th><th class="nw">垂直位置</th><th class="nw">幅</th><th class="nw">高さ</th></tr></thead>
+      <tbody>
+        <tr><td>スライサー 担当者</td><td class="mono">16</td><td class="mono">16</td><td class="mono">176</td><td class="mono">180</td></tr>
+        <tr><td>スライサー 目的</td><td class="mono">16</td><td class="mono">204</td><td class="mono">176</td><td class="mono">230</td></tr>
+        <tr><td>スライサー 年月</td><td class="mono">16</td><td class="mono">442</td><td class="mono">176</td><td class="mono">180</td></tr>
+        <tr><td>カード 訪問件数</td><td class="mono">204</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
+        <tr><td>カード 顧客数</td><td class="mono">472</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
+        <tr><td>カード 担当者数</td><td class="mono">740</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
+        <tr><td>カード クレーム対応</td><td class="mono">1008</td><td class="mono">16</td><td class="mono">256</td><td class="mono">100</td></tr>
+        <tr><td>顧客別 訪問件数</td><td class="mono">204</td><td class="mono">124</td><td class="mono">624</td><td class="mono">260</td></tr>
+        <tr><td>目的別 件数</td><td class="mono">840</td><td class="mono">124</td><td class="mono">424</td><td class="mono">260</td></tr>
+        <tr><td>月別 推移</td><td class="mono">204</td><td class="mono">392</td><td class="mono">624</td><td class="mono">200</td></tr>
+        <tr><td>担当者別 件数</td><td class="mono">840</td><td class="mono">392</td><td class="mono">424</td><td class="mono">200</td></tr>
+        <tr><td>マトリックス</td><td class="mono">204</td><td class="mono">600</td><td class="mono">1060</td><td class="mono">190</td></tr>
+        <tr><td>活動明細</td><td class="mono">204</td><td class="mono">798</td><td class="mono">1060</td><td class="mono">146</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note hl"><b>作る順番は「全部置いてから位置を入れる」より「1つ作る→位置を入れる」のほうが早いです。</b>
+    後からまとめて直すと、どれがどれか分からなくなります。</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>ビジュアルを9個つくる</h2></div>
+  <p class="lede">上から順に作れば、前のビジュアルの設定が次で効いてきます。値を入れたあとの「カウントに変える」を飛ばすとグラフが描かれないので、そこだけ注意してください。</p>
+
+  <div class="card pad">
+
+    <div class="step">
+      <div class="no">1</div>
+      <div class="bd">
+        <h3>KPIカード 4枚</h3>
+        <p>［視覚化］から［<b>カード</b>］を選び、4枚作ります。メジャーを作ってあるので、値に入れるだけです。</p>
+        <div class="scroll"><table>
+          <thead><tr><th style="width:26%">カード</th><th style="width:26%">値</th><th>書式</th></tr></thead>
+          <tbody>
+            <tr><td>訪問件数</td><td><code>訪問件数</code></td><td>—</td></tr>
+            <tr><td>顧客数</td><td><code>顧客数</code></td><td>—</td></tr>
+            <tr><td>担当者数</td><td><code>担当者数</code></td><td>—</td></tr>
+            <tr><td>クレーム対応</td><td><code>クレーム件数</code></td><td><b>吹き出し値 → 色 <code>#D64550</code></b></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note"><b>デモにある「全40件中」のような補足行</b>は、カードの［<b>吹き出しサブタイトル</b>］に
+        <code>クレーム率</code> メジャーを入れると近い見え方になります。無くても成立するので、時間がなければ飛ばしてください。</div>
+        <div class="note warn"><b>タイトルを出してください。</b>
+        カードは既定でタイトルが非表示のことがあります。書式 →［全般］→［タイトル］をオンにし、
+        「訪問件数」「顧客数」「担当者数」「クレーム対応」と入れます。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">2</div>
+      <div class="bd">
+        <h3>顧客別 訪問件数（集合横棒グラフ）</h3>
+        <dl class="field">
+          <dt>ビジュアル</dt><dd>集合横棒グラフ（1行目・左から3番目。マウスを乗せると名前が出ます）</dd>
+          <dt>Y軸</dt><dd><code>顧客名</code></dd>
+          <dt>X軸</dt><dd><code>訪問件数</code></dd>
+          <dt>タイトル</dt><dd>顧客別 訪問件数</dd>
+          <dt>並べ替え</dt><dd>ビジュアル右上の「⋯」→［軸の並べ替え］→ 訪問件数 → <b>降順</b></dd>
+        </dl>
+        <div class="note alert"><b>フィールドは「凡例」ではなく「Y軸」に入れてください。</b>
+        ドラッグ先を間違えると凡例に入り、色分けだけされてグラフになりません。
+        入ってしまった場合は、その欄の「∨」→［<b>移動先</b>］→［Y軸］で移せます。</div>
+        <div class="note"><b>メジャーを使わない場合</b>は、X軸に <code>顧客名</code> をドラッグし、「∨」→［<b>カウント</b>］に変えても同じ数字になります。
+        ただし凡例が「顧客名 のカウント」と表示されるので、メジャーのほうが見た目がきれいです。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">3</div>
+      <div class="bd">
+        <h3>目的別 件数（集合横棒グラフ）</h3>
+        <dl class="field">
+          <dt>Y軸</dt><dd><code>目的</code></dd>
+          <dt>X軸</dt><dd><code>訪問件数</code></dd>
+          <dt>タイトル</dt><dd>目的別 件数</dd>
+          <dt>並べ替え</dt><dd>訪問件数の降順</dd>
+        </dl>
+        <h4>クレーム対応だけ赤くする</h4>
+        <ol>
+          <li>書式ペイン →［<b>視覚エフェクト</b>］→［<b>列</b>］（または［データの色］）</li>
+          <li>［<b>すべて</b>］の右の切り替えで<b>系列ごとの指定</b>に変える</li>
+          <li>一覧から［<b>クレーム対応</b>］を選び、色を <code>#D64550</code> に</li>
+        </ol>
+        <div class="note warn"><b>区分名が変わるとこの設定は外れます。</b>
+        12区分の最終版が決まったあとに設定するほうが、二度手間になりません。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">4</div>
+      <div class="bd">
+        <h3>月別 訪問件数の推移（集合縦棒グラフ）</h3>
+        <dl class="field">
+          <dt>X軸</dt><dd><code>日付</code></dd>
+          <dt>Y軸</dt><dd><code>訪問件数</code></dd>
+          <dt>タイトル</dt><dd>月別 訪問件数の推移</dd>
+        </dl>
+        <p>日付を入れると <code>年 / 四半期 / 月 / 日</code> の階層になります。X軸の欄の「∨」→［<b>日付の階層</b>］を選び、
+        <b>年 と 月 以外を × で消す</b>と月単位の棒になります。</p>
+        <div class="note alert"><b>階層が出ない・日付で並ばない場合は、01-1の型変換ができていません。</b>
+        X軸に入れた <code>日付</code> が「日付の階層」ではなく文字として扱われています。SharePoint側の列の種類を確認してください。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">5</div>
+      <div class="bd">
+        <h3>担当者別 件数（集合横棒グラフ）</h3>
+        <dl class="field">
+          <dt>Y軸</dt><dd><code>担当者</code></dd>
+          <dt>X軸</dt><dd><code>訪問件数</code></dd>
+          <dt>タイトル</dt><dd>担当者別 件数</dd>
+          <dt>並べ替え</dt><dd>訪問件数の降順</dd>
+        </dl>
+        <div class="note"><b>今の段階では1本しか出ません。</b>
+        テスト実行したフローは1人分なので正常です。皆さまが各自のフローを動かし始めると人数分に増えます。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">6</div>
+      <div class="bd">
+        <h3>担当者 × 顧客 マトリックス</h3>
+        <dl class="field">
+          <dt>行</dt><dd><code>顧客名</code></dd>
+          <dt>列</dt><dd><code>担当者</code></dd>
+          <dt>値</dt><dd><code>訪問件数</code></dd>
+          <dt>タイトル</dt><dd>担当者 × 顧客 マトリックス</dd>
+        </dl>
+        <h4>デモのヒートマップにする</h4>
+        <ol>
+          <li>値の欄の <code>訪問件数</code> の「∨」→［<b>条件付き書式</b>］→［<b>背景色</b>］</li>
+          <li>書式スタイル＝<b>グラデーション</b></li>
+          <li>最小＝<code>#FFFFFF</code>、最大＝<code>#118DFF</code></li>
+        </ol>
+        <div class="note hl"><b>これが「誰がどの顧客を訪問したか」の表です。</b>
+        複数の担当者が同じ顧客に入っている箇所がひと目で分かり、担当の重複や引き継ぎの状況が読めます。</div>
+        <div class="note warn"><b>顧客名が名寄せされていないと、この表は成立しません。</b>
+        同じ顧客が表記違いで複数行に分かれます。顧客マスタが揃うまでは<b>担当者別・目的別の切り口をお見せする</b>ほうが安全です。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">7</div>
+      <div class="bd">
+        <h3>活動明細（テーブル）</h3>
+        <dl class="field">
+          <dt>列</dt><dd><code>日付</code> / <code>担当者</code> / <code>顧客名</code> / <code>目的</code> / <code>内容</code>（この順）</dd>
+          <dt>タイトル</dt><dd>活動明細</dd>
+          <dt>並べ替え</dt><dd>日付の降順（列見出しをクリック）</dd>
+        </dl>
+        <div class="note"><b>日付に時刻まで出したくない場合</b>は、列の「∨」→［日付の階層］を外し、
+        書式 →［<b>列の書式設定</b>］で <code>yyyy/MM/dd</code> にします。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">8</div>
+      <div class="bd">
+        <h3>スライサー 3本</h3>
+        <div class="scroll"><table>
+          <thead><tr><th style="width:22%">スライサー</th><th style="width:22%">フィールド</th><th>スタイル</th></tr></thead>
+          <tbody>
+            <tr><td>担当者</td><td><code>担当者</code></td><td>縦方向の一覧・<b>複数選択可</b></td></tr>
+            <tr><td>目的</td><td><code>目的</code></td><td>縦方向の一覧・複数選択可</td></tr>
+            <tr><td>年月</td><td><code>日付</code></td><td><b>［間］</b>（期間を範囲で指定できるつまみ付き）</td></tr>
+          </tbody>
+        </table></div>
+        <p>スタイルは、スライサーを選んで書式 →［<b>スライサーの設定</b>］→［<b>オプション</b>］→［スタイル］で変えられます。</p>
+        <div class="note alert"><b>「ボタン スライサー」を選ばないでください。</b>
+        似た名前で別のビジュアルです。日付をボタンにすると、1日ずつボタンが並んで使いものになりません。
+        マウスを乗せて「<b>スライサー</b>」とだけ出るものを選びます。</div>
+        <div class="note"><b>複数選択</b>は書式 →［スライサーの設定］→［選択］→［<b>複数選択</b>］をオンにします。
+        既定では Ctrl キーを押しながらでないと複数選べません。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="no">9</div>
+      <div class="bd">
+        <h3>クロスハイライトの確認</h3>
+        <p>ここは<b>設定不要</b>です。グラフの棒をクリックすると、他のビジュアルが連動して絞り込まれます。
+        選ばれなかった部分は薄い青のまま残るので、全体に対する割合が同時に読めます。</p>
+        <div class="note">連動の仕方を変えたい場合は、ビジュアルを選んで［書式］→［<b>相互作用を編集</b>］で、
+        ビジュアルごとに「フィルター」「ハイライト」「なし」を選べます。<b>既定のままで問題ありません。</b></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>ページ②〜④（余力があれば）</h2></div>
+  <p class="lede">①が動いてから着手してください。とくに②は、デモの「顧客カルテ」に相当する部分です。</p>
+
+  <div class="card pad">
+
+    <h3 style="margin-top:0">② 顧客別（ドリルスルー）</h3>
+    <p>一覧で顧客を右クリック →［ドリルスルー］→ その顧客専用のページに飛ぶ、という動きになります。</p>
+    <ol>
+      <li>ページを追加し、名前を <code>顧客別</code> に</li>
+      <li>どのビジュアルも選択していない状態で、書式ペイン下部の［<b>ドリルスルー</b>］欄に <code>顧客名</code> をドラッグ</li>
+      <li>次のビジュアルを置く</li>
+    </ol>
+    <div class="scroll"><table>
+      <thead><tr><th style="width:30%">ビジュアル</th><th>設定</th></tr></thead>
+      <tbody>
+        <tr><td>カード 訪問件数</td><td>値＝<code>訪問件数</code></td></tr>
+        <tr><td>カード 担当した人数</td><td>値＝<code>担当者数</code></td></tr>
+        <tr><td>カード 最終訪問日</td><td>値＝<code>日付</code> →「∨」→［<b>最新</b>］</td></tr>
+        <tr><td>カード クレーム対応</td><td>値＝<code>クレーム件数</code>・色 <code>#D64550</code></td></tr>
+        <tr><td>横棒「誰が訪問したか」</td><td>Y軸＝<code>担当者</code>／X軸＝<code>訪問件数</code></td></tr>
+        <tr><td>テーブル「訪問履歴」</td><td><code>日付</code>／<code>担当者</code>／<code>目的</code>／<code>内容</code>・日付降順</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note hl"><b>一覧ページに戻って顧客名を右クリックすると［ドリルスルー］が出ます。</b>
+    デモの右側パネルと同じ内容が、専用ページとして開きます。</div>
+
+    <h3>③ 担当者別</h3>
+    <p>①をページ複製し（ページタブを右クリック →［ページの複製］）、マトリックスの行と列を入れ替えます（行＝担当者／列＝目的）。
+    スライサーもそのまま使えます。</p>
+
+    <h3>④ クレーム分析</h3>
+    <p>①を複製し、<b>ページ全体のフィルター</b>に <code>目的</code> ＝ クレーム対応 を設定します。
+    フィルターペインの［<b>このページでのフィルター</b>］に <code>目的</code> をドラッグして「クレーム対応」にチェックを入れます。</p>
+    <div class="note"><b>経営層向けの週次報告はこのページをPDFで書き出すのが早いです。</b>
+    ［エクスポート］→［PDF］でレイアウトごと出ます。無償ライセンスでも書き出せます。</div>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>動作確認と保存</h2></div>
+  <div class="card pad">
+    <ol>
+      <li>右上の［<b>保存</b>］。名前は <code>営業活動ダッシュボード</code></li>
+      <li><b>顧客の棒をクリック</b>して、他のビジュアルが連動することを確認</li>
+      <li><b>月の棒をクリック</b>して、その月だけに切り替わることを確認</li>
+      <li><b>スライサーで担当者を選び</b>、KPIの数字が変わることを確認</li>
+      <li>［<b>フィルターをリセット</b>］（または選択を解除）で元に戻ることを確認</li>
+      <li>［エクスポート］→［<b>PDF</b>］で書き出せることを確認</li>
+    </ol>
+    <div class="note ok"><b>ここまで通れば完成です。</b>以降はリストにデータが増えれば自動で反映されます。</div>
+
+    <h3>更新の設定</h3>
+    <p>マイ ワークスペースのセマンティック モデルの「⋯」→［<b>設定</b>］→［<b>データの更新</b>］で、1日1回の自動更新を設定します。
+    週報は週次なので1日1回で十分です。</p>
+    <div class="note"><b>スケジュール更新はマイ ワークスペース内なら無償ライセンスで使えます。</b>
+    共有ワークスペースに移す段階でProが必要になります。</div>
+  </div>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>つまずきポイント</h2></div>
+  <div class="card pad">
+    <div class="scroll"><table>
+      <thead><tr><th style="width:32%">起こること</th><th>原因と対処</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>グラフが描かれない・棒が出ない</b></td>
+          <td>値が集計になっていません。フィールドの「∨」→［<b>カウント</b>］に変えるか、メジャー（<code>訪問件数</code>）を使ってください。<b>最も多い詰まり方です</b></td>
+        </tr>
+        <tr>
+          <td><b>凡例に入ってしまい件数に変えられない</b></td>
+          <td>凡例は集計しません。フィールドの「∨」→［<b>移動先</b>］→［X軸］または［Y軸］で移してください</td>
+        </tr>
+        <tr>
+          <td><b>月でまとめられない／日付スライサーが範囲にならない</b></td>
+          <td>日付が<b>文字列</b>です。SharePointの列の種類を［日付と時刻］に変更し、Power BIで更新してください</td>
+        </tr>
+        <tr>
+          <td><b>フィールド名が <code>field_1</code> と出る</b></td>
+          <td>本来は表示名が来ます。モデルが古い状態なので、セマンティック モデルで［今すぐ更新］してください</td>
+        </tr>
+        <tr>
+          <td><b>システム列が大量に並んで目的の列が探せない</b></td>
+          <td>［データ］ペインの<b>検索ボックス</b>に列名を入れてください。恒久対応はモデル ビューで不要列を右クリック →［レポート ビューで非表示にする］</td>
+        </tr>
+        <tr>
+          <td><b>モデルを編集しても保存されない</b></td>
+          <td>「表示モードになっているため、変更は保存されません」の帯が出ています。<b>編集モードに切り替えて</b>ください</td>
+        </tr>
+        <tr>
+          <td><b>クレーム対応が0件になる</b></td>
+          <td>区分名が変わっています。<code>クレーム件数</code> メジャーの文字列と、目的別グラフの色指定を直してください</td>
+        </tr>
+        <tr>
+          <td><b>テーマを入れたら書式が消えた</b></td>
+          <td>仕様です（<i>「Importing a custom theme also removes any existing customizations」</i>）。テーマはビジュアルを作る前に決めてください</td>
+        </tr>
+        <tr>
+          <td><b>顧客別の集計がばらける</b></td>
+          <td>顧客名が名寄せされていません。顧客マスタと突合するまでは、顧客別の数字を確定値としてお見せしないでください</td>
+        </tr>
+        <tr>
+          <td><b>他の人に共有できない</b></td>
+          <td>無償ライセンスの制約です。マイ ワークスペース内は「自分だけが見る」範囲になります。配布にはPro（見る人も含む）かPremium容量が必要です</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>この先</h2></div>
+  <div class="card pad">
+    <div class="scroll"><table>
+      <thead><tr><th style="width:28%">項目</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td><b>顧客マスタとの突合</b></td><td>正式名称と顧客コードを付与します。顧客別・拠点別の集計はこれが前提です</td></tr>
+        <tr><td><b>拠点の自動取得</b></td><td>Microsoft 365のユーザー情報（部署・勤務地）から取得できる見込みです。拠点別の集計軸になります</td></tr>
+        <tr><td><b>共有ワークスペースへの移動</b></td><td>個人の領域のままだと、異動・退職時にレポートごと失われます。Pro取得後に移します。<b>作り直しは不要です</b></td></tr>
+        <tr><td><b>Teamsタブへの貼り付け</b></td><td>Power BIを開かずに見られるようになります</td></tr>
+        <tr><td><b>Excel帳票への書き出し</b></td><td>決まった体裁で配るなら、グラフを組み込んだExcelのひな形にPower Automateで数値を流し込む形が向いています</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note hl"><b>画面で掘り下げたいならPower BI、決まった体裁の帳票を配るならExcelのひな形。</b>
+    どちらも同じSharePointリストを使うので、二重管理にはなりません。</div>
+  </div>
+</section>
+
+<footer>
+  <span>営業活動ダッシュボード 構築手順</span>
+  <span class="mono">2026-09-21</span>
+</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var links = Array.prototype.slice.call(document.querySelectorAll(".nav-in a"));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute("href")); });
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          var i = secs.indexOf(e.target);
+          links.forEach(function(l,j){ l.style.color = (i===j) ? "var(--navy)" : ""; });
+        }
+      });
+    }, {rootMargin:"-54px 0px -70% 0px"});
+    secs.forEach(function(s){ if(s) io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
